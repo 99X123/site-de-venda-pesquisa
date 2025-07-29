@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORE ONLINE Admin Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-store"></i>
+                <h1>STORE ONLINE Admin</h1>
+                <p>Painel de Administração</p>
+            </div>
+            
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Usuário" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Senha" required>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+            </form>
+            
+            <div class="demo-credentials">
+                <p><strong>Credenciais de Demo:</strong></p>
+                <p>Usuário: admin</p>
+                <p>Senha: 123456</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <i class="fas fa-store"></i>
+                <h1>STORE ONLINE Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <a href="index.html" class="view-store-btn" target="_blank">
+                    <i class="fas fa-eye"></i>
+                    Ver Loja
+                </a>
+                <span class="user-info">
+                    <i class="fas fa-user"></i>
+                    <span id="currentUser">Admin</span>
+                </span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalProducts">0</h3>
+                        <p>Total de Produtos</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inStockProducts">0</h3>
+                        <p>Em Estoque</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="lowStockProducts">0</h3>
+                        <p>Estoque Baixo</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="outOfStockProducts">0</h3>
+                        <p>Fora de Estoque</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Management -->
+            <div class="products-section">
+                <div class="section-header">
+                    <h2>Gerenciar Produtos</h2>
+                    <div class="header-actions">
+                        <button class="add-product-btn" onclick="openAddProductModal()">
+                            <i class="fas fa-plus"></i>
+                            Adicionar Produto
+                        </button>
+                        <button class="reset-btn" onclick="resetProducts()" style="background: var(--warning); margin-left: 0.5rem;">
+                            <i class="fas fa-refresh"></i>
+                            Resetar Dados
+                        </button>
+
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="products-table-container">
+                    <table class="products-table" id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Adicionar Produto</h3>
+                <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            </div>
+            
+            <form class="product-form" id="productForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Nome do Produto</label>
+                        <input type="text" id="productName" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productPrice">Preço</label>
+                        <input type="text" id="productPrice" name="price" placeholder="0,50" pattern="[0-9]*[.,]?[0-9]+" required>
+                        <small style="color: var(--text-secondary); font-size: 0.8rem;">Digite o preço (ex: 0,50 ou 0.50)</small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Descrição</label>
+                    <textarea id="productDescription" name="description" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productImage">URL da Imagem</label>
+                        <input type="url" id="productImage" name="image" placeholder="https://..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productStock">Quantidade em Estoque</label>
+                        <input type="number" id="productStock" name="stock" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <span class="close-modal" onclick="closeDeleteModal()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o produto "<span id="deleteProductName"></span>"?</p>
+                <p>Esta ação não pode ser desfeita.</p>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i>
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html> 

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STORE ONLINE - Produtos Surreais</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                <h1>STORE ONLINE</h1>
+            </div>
+            <p class="subtitle">Lista dos produtos mais surreais e peculiares</p>
+            <div class="discord-link">
+                <a href="https://discord.gg/rK6A7ymUKB" target="_blank" class="discord-btn">
+                    <i class="fab fa-discord"></i>
+                    Discord
+                </a>
+                <button id="refreshBtn" class="refresh-btn" onclick="refreshProducts()">
+                    <i class="fas fa-sync-alt"></i>
+                    Atualizar
+                </button>
+                <button id="cartBtn" class="cart-btn" onclick="openCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="cart-count">0</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="search-section">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Digite o nome do produto surreal..."
+                            autocomplete="off"
+                        >
+                        <button id="searchBtn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+
+            </div>
+
+            <div class="results-section">
+                <div class="results-header">
+                    <h2>Resultados da Pesquisa</h2>
+                    <div class="results-count">
+                        <span id="resultsCount">0</span> produtos encontrados
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Buscando produtos...</p>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    <!-- Produtos serão inseridos aqui dinamicamente -->
+                </div>
+
+                <div class="no-results" id="noResults" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhum produto encontrado</h3>
+                    <p>Tente ajustar os filtros ou digite outro termo de pesquisa</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="admin-link">
+            <a href="admin.html" class="admin-btn">
+                <i class="fas fa-cog"></i>
+                Painel Administrativo
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal para detalhes do produto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="product-details">
+                    <div class="product-image">
+                        <img id="modalProductImage" src="" alt="">
+                        <div class="image-placeholder" style="display: none;">
+                            <i class="fas fa-tshirt"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 id="modalProductName"></h3>
+                        <p class="product-description" id="modalProductDescription"></p>
+                        <div class="product-meta">
+                            <span class="category" id="modalProductCategory"></span>
+                            <span class="price" id="modalProductPrice"></span>
+                        </div>
+                        <div class="stock-status" id="modalStockStatus">
+                            <span class="status-badge"></span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-secondary" onclick="closeProductModal()">
+                                <i class="fas fa-times"></i>
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Carrinho -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h3>
+                <span class="close-modal" onclick="closeCart()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div id="cartItems" class="cart-items">
+                    <!-- Itens do carrinho serão inseridos aqui -->
+                </div>
+                
+                <div id="emptyCart" class="empty-cart">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>Carrinho Vazio</h3>
+                    <p>Adicione produtos para começar suas compras!</p>
+                </div>
+                
+                <div id="cartSummary" class="cart-summary" style="display: none;">
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span id="cartTotal">R$ 0,00</span>
+                    </div>
+                    <div class="cart-actions">
+                        <button class="btn-secondary" onclick="clearCart()">
+                            <i class="fas fa-trash"></i>
+                            Limpar Carrinho
+                        </button>
+                        <button class="btn-primary" onclick="checkout()">
+                            <i class="fas fa-credit-card"></i>
+                            Finalizar Compra
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Feito com ❤️ por <strong>Carlos</strong></p>
+            <a href="https://github.com/99X123" target="_blank" class="github-link">
+                <i class="fab fa-github"></i>
+                @99X123
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
